@@ -7,7 +7,7 @@ localFile = ''
 bucket = ''
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], 'a:s:f:e:b:')
+    opts, args = getopt.getopt(sys.argv[1:], 'a:s:f:e:b:p:')
 except getopt.GetoptError as err:
     print(str(err))
     exit()
@@ -23,12 +23,15 @@ for k, val in opts:
         endpoint = val
     elif k == '-b':
         bucket_name = val
+    elif k == '-p':
+        oss_dir = val
 
 bucket = oss2.Bucket(oss2.Auth(access_key_id, access_key_secret), endpoint, bucket_name)
 
 # upload
 if os.path.isfile(localFile):
-    bucket.put_object_from_file(os.path.basename(localFile), localFile)
+    oss_path = os.path.join(oss_dir, os.path.basename(localFile))
+    bucket.put_object_from_file(oss_path, localFile)
 else:
     print(localFile + ' not exists!')
 
